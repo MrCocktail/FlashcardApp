@@ -23,8 +23,23 @@ class MainActivity : AppCompatActivity() {
         val rep1 = findViewById<View>(R.id.rep1)
         val rep2 = findViewById<View>(R.id.rep2)
         val rep3 = findViewById<View>(R.id.rep3)
+        val answersContainer = findViewById<View>(R.id.answers_container)
         val icon = findViewById<ImageView>(R.id.toggle_choices_visibility)
-        val isShowingAnswers = true
+        var isShowingAnswers = true
+
+        icon.setOnClickListener {
+            if (isShowingAnswers) {
+                // Hide the block
+                answersContainer.visibility = View.GONE
+                icon.setImageResource(R.drawable.show_icon)
+                isShowingAnswers = false
+            } else {
+                // Reveal the block
+                answersContainer.visibility = View.VISIBLE
+                icon.setImageResource(R.drawable.hide_icon)
+                isShowingAnswers = true
+            }
+        }
 
         flashcardQuestion.setOnClickListener {
             flashcardQuestion.visibility = View.INVISIBLE
@@ -45,10 +60,6 @@ class MainActivity : AppCompatActivity() {
         }
         rep3.setOnClickListener {
             rep3.setBackgroundColor(getResources().getColor(R.color.green, null))
-        }
-
-        icon.setOnClickListener {
-            icon.setImageResource(R.drawable.show_icon)
         }
     }
 }

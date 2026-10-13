@@ -22,6 +22,7 @@
 
     <TextView
         android:id="@+id/flashcard_answer"
+        android:background="@drawable/card_resp_background"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:text="Port-au-Prince"
@@ -30,36 +31,46 @@
         android:visibility="invisible"
         android:layout_margin="20dp"/>
 
-    <TextView android:id="@+id/rep1"
+    <!-- Container holding the entire block of choices -->
+    <LinearLayout
+        android:id="@+id/answers_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Cap-Haïtien"
-        android:layout_below="@+id/flashcard_question"
-        android:layout_marginVertical="20dp"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:background="#ffee8c"
-        android:layout_margin="20dp"/>
-    <TextView android:id="@+id/rep2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Hinche"
-        android:layout_below="@+id/rep1"
-        android:layout_marginVertical="20dp"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:background="#ffee8c"
-        android:layout_margin="20dp"/>
-    <TextView android:id="@+id/rep3"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Port-au-Prince"
-        android:layout_below="@+id/rep2"
-        android:layout_marginVertical="20dp"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:background="#ffee8c"
-        android:layout_margin="20dp"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_below="@id/flashcard_question"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/rep1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="#ffee8c"
+            android:gravity="center"
+            android:text="Cap-Haïtien"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/rep2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="#ffee8c"
+            android:gravity="center"
+            android:text="Hinche"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/rep3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:background="#ffee8c"
+            android:gravity="center"
+            android:text="Port-au-Prince"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="40dp"
