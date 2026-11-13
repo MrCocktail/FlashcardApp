@@ -1,14 +1,22 @@
 package com.example.flashcardapp
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -31,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         flashcardDatabase.initFirstCard()
         allFlashcards = flashcardDatabase.getAllCards().toMutableList()
 
+        val cardContainer = findViewById<View>(R.id.flashcard_card_container)
         val flashcardQuestion = findViewById<TextView>(R.id.flashcard_question)
         val flashcardAnswer = findViewById<TextView>(R.id.flashcard_answer)
         val rep1 = findViewById<TextView>(R.id.rep1)
@@ -74,12 +83,13 @@ class MainActivity : AppCompatActivity() {
                         flashcardQuestion.text = question
                         flashcardAnswer.text = answer
 
-                        rep1.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
-                        rep2.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
-                        rep3.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
+                        resetChoicesAppearance(rep1, rep2, rep3)
 
+                        cardContainer.setBackgroundResource(R.drawable.card_background)
                         flashcardQuestion.visibility = View.VISIBLE
                         flashcardAnswer.visibility = View.INVISIBLE
+                        flashcardAnswer.scaleX = 1f
+                        flashcardAnswer.alpha = 1f
                     }
                 }
             }
@@ -87,78 +97,144 @@ class MainActivity : AppCompatActivity() {
 
         icon.setOnClickListener {
             if (isShowingAnswers) {
-                // Hide the block
+                // Masquer le bloc des choix
                 answersContainer.visibility = View.GONE
                 icon.setImageResource(R.drawable.show_icon)
                 isShowingAnswers = false
             } else {
-                // Reveal the block
+                // Afficher le bloc des choix
                 answersContainer.visibility = View.VISIBLE
                 icon.setImageResource(R.drawable.hide_icon)
                 isShowingAnswers = true
             }
         }
 
+        // Animation de la réponse : passage au vert émeraude (fond fixe) et texte animé du centre vers les côtés
         flashcardQuestion.setOnClickListener {
             flashcardQuestion.visibility = View.INVISIBLE
             flashcardAnswer.visibility = View.VISIBLE
+            cardContainer.setBackgroundResource(R.drawable.card_resp_background)
+
+            val width = if (flashcardAnswer.width > 0) flashcardAnswer.width else cardContainer.width
+            val height = if (flashcardAnswer.height > 0) flashcardAnswer.height else cardContainer.height
+
+            // Point pivot au centre du texte
+            flashcardAnswer.pivotX = width / 2f
+            flashcardAnswer.pivotY = height / 2f
+            flashcardAnswer.scaleX = 0f
+            flashcardAnswer.alpha = 0f
+
+            // Animation horizontale du centre vers les deux extrémités gauche et droite
+            val scaleXAnim = ObjectAnimator.ofFloat(flashcardAnswer, View.SCALE_X, 0f, 1f).apply {
+                duration = 600L
+                interpolator = DecelerateInterpolator()
+            }
+            val alphaAnim = ObjectAnimator.ofFloat(flashcardAnswer, View.ALPHA, 0f, 1f).apply {
+                duration = 600L
+                interpolator = DecelerateInterpolator()
+            }
+
+            AnimatorSet().apply {
+                playTogether(scaleXAnim, alphaAnim)
+                start()
+            }
         }
+
+        // Taper sur la réponse pour revenir à la question (rétablissement du fond bleu/indigo)
         flashcardAnswer.setOnClickListener {
+            cardContainer.setBackgroundResource(R.drawable.card_background)
             flashcardQuestion.visibility = View.VISIBLE
             flashcardAnswer.visibility = View.INVISIBLE
+            flashcardAnswer.scaleX = 1f
+            flashcardAnswer.alpha = 1f
         }
 
         rep1.setOnClickListener {
-            rep1.setBackgroundColor(getResources().getColor(R.color.red, null))
-            rep3.setBackgroundColor(getResources().getColor(R.color.green, null))
+            rep1.setBackgroundResource(R.drawable.choice_wrong_background)
+            rep1.setTextColor(Color.WHITE)
+            rep3.setBackgroundResource(R.drawable.choice_correct_background)
+            rep3.setTextColor(Color.WHITE)
         }
         rep2.setOnClickListener {
-            rep2.setBackgroundColor(getResources().getColor(R.color.red, null))
-            rep3.setBackgroundColor(getResources().getColor(R.color.green, null))
+            rep2.setBackgroundResource(R.drawable.choice_wrong_background)
+            rep2.setTextColor(Color.WHITE)
+            rep3.setBackgroundResource(R.drawable.choice_correct_background)
+            rep3.setTextColor(Color.WHITE)
         }
         rep3.setOnClickListener {
-            rep3.setBackgroundColor(getResources().getColor(R.color.green, null))
+            rep3.setBackgroundResource(R.drawable.choice_correct_background)
+            rep3.setTextColor(Color.WHITE)
         }
 
+        // Animation de transition : MainActivity vers AddCardActivity
         addCard.setOnClickListener {
             val intent = Intent(this, AddCardActivity::class.java)
             resultLauncher.launch(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, R.anim.right_in, R.anim.left_out)
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.right_in, R.anim.left_out)
+            }
         }
 
+        // Animation glissante pour passer à la carte suivante (carte entière animée)
         nextCardButton.setOnClickListener {
-            // Ne rien afficher de nouveau s'il n'y a qu'une seule carte (ou aucune)
             if (allFlashcards.size <= 1) {
                 return@setOnClickListener
             }
 
-            // Passer à la carte suivante
-            currentCardDisplayedIndex++
+            val leftOutAnim = AnimationUtils.loadAnimation(this, R.anim.left_out)
+            val rightInAnim = AnimationUtils.loadAnimation(this, R.anim.right_in)
 
-            // Reboucler au début si on a atteint la fin de la liste
-            if (currentCardDisplayedIndex >= allFlashcards.size) {
-                currentCardDisplayedIndex = 0
-            }
+            leftOutAnim.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {}
 
-            // Récupérer et afficher la nouvelle carte
-            val currentCard = allFlashcards[currentCardDisplayedIndex]
-            flashcardQuestion.text = currentCard.question
-            flashcardAnswer.text = currentCard.answer
+                override fun onAnimationEnd(animation: Animation?) {
+                    // Passer à la carte suivante
+                    currentCardDisplayedIndex++
+                    if (currentCardDisplayedIndex >= allFlashcards.size) {
+                        currentCardDisplayedIndex = 0
+                    }
 
-            // Mettre à jour les choix si présents
-            if (currentCard.wrongAnswer1 != null && currentCard.wrongAnswer2 != null) {
-                rep1.text = currentCard.wrongAnswer1
-                rep2.text = currentCard.wrongAnswer2
-                rep3.text = currentCard.answer
-            }
+                    // Récupérer et afficher la nouvelle carte
+                    val currentCard = allFlashcards[currentCardDisplayedIndex]
+                    flashcardQuestion.text = currentCard.question
+                    flashcardAnswer.text = currentCard.answer
 
-            // Réinitialiser la couleur des réponses
-            rep1.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
-            rep2.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
-            rep3.setBackgroundColor(android.graphics.Color.parseColor("#ffee8c"))
+                    // Mettre à jour les choix si présents
+                    if (currentCard.wrongAnswer1 != null && currentCard.wrongAnswer2 != null) {
+                        rep1.text = currentCard.wrongAnswer1
+                        rep2.text = currentCard.wrongAnswer2
+                        rep3.text = currentCard.answer
+                    }
 
-            // Réinitialiser la visibilité (question visible, réponse masquée)
-            flashcardQuestion.visibility = View.VISIBLE
-            flashcardAnswer.visibility = View.INVISIBLE
+                    // Réinitialiser le style des réponses
+                    resetChoicesAppearance(rep1, rep2, rep3)
+
+                    // Réinitialiser l'arrière-plan de la carte (indigo) et la visibilité
+                    cardContainer.setBackgroundResource(R.drawable.card_background)
+                    flashcardQuestion.visibility = View.VISIBLE
+                    flashcardAnswer.visibility = View.INVISIBLE
+                    flashcardAnswer.scaleX = 1f
+                    flashcardAnswer.alpha = 1f
+
+                    // Animer la nouvelle carte venant de la droite
+                    cardContainer.startAnimation(rightInAnim)
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {}
+            })
+
+            // Animer la carte vers la gauche
+            cardContainer.startAnimation(leftOutAnim)
+        }
+    }
+
+    private fun resetChoicesAppearance(vararg choices: TextView) {
+        for (choice in choices) {
+            choice.setBackgroundResource(R.drawable.choice_background)
+            choice.setTextColor(ContextCompat.getColor(this, R.color.choice_text))
         }
     }
 }

@@ -5,104 +5,142 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/flashcard_question"
+    <!-- Card Container with fixed background -->
+    <FrameLayout
+        android:id="@+id/flashcard_card_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="What's Haiti's capital?"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:gravity="center"
+        android:layout_height="220dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/card_background"
-        android:elevation="7dp"
-        android:padding="10dp"
-        android:layout_margin="20dp"/>
+        android:elevation="8dp">
 
-    <TextView
-        android:id="@+id/flashcard_answer"
-        android:background="@drawable/card_resp_background"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:text="Port-au-Prince"
-        android:textSize="40sp"
-        android:gravity="center"
-        android:visibility="invisible"
-        android:layout_margin="20dp"/>
+        <TextView
+            android:id="@+id/flashcard_question"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="What's Haiti's capital?"
+            android:textColor="@color/card_text"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="20dp" />
+
+        <TextView
+            android:id="@+id/flashcard_answer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Port-au-Prince"
+            android:textColor="@color/card_text"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="20dp"
+            android:visibility="invisible" />
+
+    </FrameLayout>
 
     <!-- Container holding the entire block of choices -->
     <LinearLayout
         android:id="@+id/answers_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_below="@id/flashcard_question"
+        android:layout_below="@id/flashcard_card_container"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="28dp"
         android:orientation="vertical"
         android:visibility="visible">
 
         <TextView
             android:id="@+id/rep1"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:background="#ffee8c"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/choice_background"
+            android:elevation="2dp"
             android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="Cap-Haïtien"
-            android:textSize="20sp" />
+            android:textColor="@color/choice_text"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/rep2"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:background="#ffee8c"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/choice_background"
+            android:elevation="2dp"
             android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="Hinche"
-            android:textSize="20sp" />
+            android:textColor="@color/choice_text"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/rep3"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:background="#ffee8c"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/choice_background"
+            android:elevation="2dp"
             android:gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="Port-au-Prince"
-            android:textSize="20sp" />
+            android:textColor="@color/choice_text"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/add_card"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/circle_button_background"
         android:contentDescription="@string/img_desc"
-        android:src="@drawable/add_icon" />
+        android:elevation="4dp"
+        android:padding="15dp"
+        android:src="@drawable/add_icon"
+        app:tint="@color/primary" />
 
     <ImageView
         android:id="@+id/toggle_choices_visibility"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/circle_button_background"
         android:contentDescription="@string/img_desc"
-        android:src="@drawable/hide_icon" />
+        android:elevation="4dp"
+        android:padding="15dp"
+        android:src="@drawable/hide_icon"
+        app:tint="@color/primary" />
 
     <ImageView
         android:id="@+id/next_card_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/circle_button_background"
         android:contentDescription="@string/img_desc"
-        android:src="@drawable/next_icon" />
-
+        android:elevation="4dp"
+        android:padding="15dp"
+        android:src="@drawable/next_icon"
+        app:tint="@color/primary" />
 
 </RelativeLayout>

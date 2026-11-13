@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- État quand l'EditText a le focus (Sélectionné / Actif) -->
+    <!-- State when EditText has focus -->
     <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF" /> <!-- Fond blanc -->
-            <stroke android:width="2dp" android:color="#FF0000" /> <!-- Bordure ROUGE -->
-            <corners android:radius="8dp" /> <!-- Arrondi des angles -->
+            <solid android:color="#FFFFFF" />
+            <stroke android:width="2dp" android:color="@color/primary" />
+            <corners android:radius="12dp" />
         </shape>
     </item>
 
-    <!-- État par défaut (Sans focus) -->
+    <!-- Default state (no focus) -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF" />
-            <stroke android:width="2dp" android:color="#9E9E9E" /> <!-- Bordure grise bien visible -->
-            <corners android:radius="8dp" />
+            <solid android:color="#F8FAFC" />
+            <stroke android:width="1.5dp" android:color="@color/choice_border" />
+            <corners android:radius="12dp" />
         </shape>
     </item>
 </selector>

@@ -2,6 +2,7 @@ package com.example.flashcardapp
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
@@ -28,6 +29,7 @@ class AddCardActivity : AppCompatActivity() {
 
         cancelButton.setOnClickListener {
             finish()
+            applyExitTransition()
         }
 
         saveButton.setOnClickListener {
@@ -42,6 +44,16 @@ class AddCardActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK, data)
             finish()
+            applyExitTransition()
+        }
+    }
+
+    private fun applyExitTransition() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, R.anim.left_in, R.anim.right_out)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.left_in, R.anim.right_out)
         }
     }
 }
